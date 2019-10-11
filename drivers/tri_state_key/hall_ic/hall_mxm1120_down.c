@@ -1023,7 +1023,11 @@ static int m1120_enable_irq(bool enable)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int m1120_clear_irq(void)
+=======
+static int m1120_clear_irq()
+>>>>>>> 6d11b53700ea... import OnePlus OSS drivers and coretech
 {
 	printk(KERN_INFO "  %s", __func__);
 	if(p_m1120_data == NULL) {
@@ -1035,7 +1039,11 @@ static int m1120_clear_irq(void)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int m1120_get_irq_state(void)
+=======
+static int m1120_get_irq_state()
+>>>>>>> 6d11b53700ea... import OnePlus OSS drivers and coretech
 {
 	printk(KERN_INFO "  %s", __func__);
 	if(p_m1120_data == NULL) {
@@ -1114,7 +1122,11 @@ static void m1120_dump_reg(u8* buf)
 	return;
 }
 
+<<<<<<< HEAD
 static bool m1120_is_power_on(void)
+=======
+static bool m1120_is_power_on()
+>>>>>>> 6d11b53700ea... import OnePlus OSS drivers and coretech
 {
 	printk(KERN_INFO "  %s", __func__);
 	if (p_m1120_data == NULL) {
