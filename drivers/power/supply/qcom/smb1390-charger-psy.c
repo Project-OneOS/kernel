@@ -889,6 +889,31 @@ static int smb1390_slave_disable_vote_cb(struct votable *votable, void *data,
 	if (rc < 0)
 		pr_err("Couldn't %s slave rc=%d\n",
 				disable ? "disable" : "enable", rc);
+		return rc;
+	}
+
+	/* Re-distribute ILIM to Master CP when Slave is disabled */
+	if (disable && (chip->ilim_votable)) {
+		ilim_ua = get_effective_result_locked(chip->ilim_votable);
+		if (ilim_ua > MAX_ILIM_UA)
+			ilim_ua = MAX_ILIM_UA;
+
+		if (ilim_ua < 500000) {
+			smb1390_dbg(chip, PR_INFO, "ILIM too low, not re-distributing, ilim=%duA\n",
+								ilim_ua);
+			return 0;
+		}
+
+		rc = smb1390_set_ilim(chip,
+		      DIV_ROUND_CLOSEST(ilim_ua - 500000, 100000));
+		if (rc < 0) {
+			pr_err("Failed to set ILIM, rc=%d\n", rc);
+			return rc;
+		}
+
+		smb1390_dbg(chip, PR_INFO, "Master ILIM set to %duA\n",
+								ilim_ua);
+	}
 
 	return rc;
 }
@@ -936,7 +961,8 @@ static int smb1390_ilim_vote_cb(struct votable *votable, void *data,
 			return rc;
 		}
 
-		smb1390_dbg(chip, PR_INFO, "ILIM set to %duA\n", ilim_uA);
+		smb1390_dbg(chip, PR_INFO, "ILIM set to %duA slave_enabled%d\n",
+						ilim_uA, slave_enabled);
 		vote(chip->disable_votable, ILIM_VOTER, false, 0);
 	}
 
