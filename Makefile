@@ -600,7 +600,7 @@ scripts: scripts_basic include/config/auto.conf include/config/tristate.conf \
 
 # Objects we will link into vmlinux / subdirs we need to visit
 init-y		:= init/
-drivers-y	:= drivers/ sound/ firmware/ coretech/ techpack/ techpack/data/drivers/
+drivers-y	:= drivers/ sound/ firmware/ coretech/ techpack/
 net-y		:= net/
 libs-y		:= lib/
 core-y		:= usr/
