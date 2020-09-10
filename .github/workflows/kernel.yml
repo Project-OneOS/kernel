@@ -20,5 +20,12 @@ jobs:
        cd ../ && rm -rf clang-r353983c.tar.gz
        git clone --depth=1 https://github.com/AndroiableDroid/toolchain -b opt-linaro-7.x linaro
        export PATH="$(pwd)/clang/bin:$(pwd)/linaro/bin":${PATH}
-    - name: Making
+    - name: Making Defconfig
+      run: make ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-opt-linux-android- vendor/sm8150-perf_defconfig
+    - name: Making Defconfig
       run: make ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-opt-linux-android-
+    - name: Upload Build
+      uses: actions/upload-artifact@v2.1.4
+      with:
+        name: Image.gz
+        path: arch/arm64/boot/Image.gz
