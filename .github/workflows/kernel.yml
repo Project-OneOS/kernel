@@ -1,0 +1,24 @@
+name: Compiler
+
+on:
+  push:
+    branches: [ rebase ]
+  pull_request:
+    branches: [ rebase ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Toolchains
+      run: |
+       wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/android-10.0.0_r3/clang-r353983c.tar.gz
+       mkdir clang && cd clang && tar -xvf ../clang-r353983c.tar.gz
+       cd ../ && rm -rf clang-r353983c.tar.gz
+       git clone --depth=1 https://github.com/AndroiableDroid/toolchain -b opt-linaro-7.x linaro
+       export PATH="$(pwd)/clang/bin:$(pwd)/linaro/bin":${PATH}
+    - name: Making
+      run: make ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-opt-linux-android-
