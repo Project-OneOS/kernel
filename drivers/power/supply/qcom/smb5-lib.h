@@ -34,6 +34,34 @@ enum print_reason {
 	PR_WLS		= BIT(5),
 };
 
+/* @bsp, 2019/04/17 Battery & Charging porting */
+#define BATT_TYPE_FCC_VOTER "BATT_TYPE_FCC_VOTER"
+#define PSY_ICL_VOTER		"PSY_ICL_VOTER"
+#define TEMP_REGION_MAX               9
+#define NON_STANDARD_CHARGER_CHECK_S 100
+#define TIME_1000MS 1000
+#define REDET_COUTNT 5
+#define APSD_CHECK_COUTNT 15
+#define DASH_CHECK_COUNT 40
+#define BOOST_BACK_COUNT 2
+#define TIME_200MS 200
+#define TIME_100MS 100
+#define TIME_3S 3000
+#define NORMAL_CHECK_INTERVAL_PERIOD 300 /*ms*/
+#define FAST_CHECK_INTERVAL_PERIOD 100 /*ms*/
+#define FAST_CHECK_THRESHOLD_TEMP 45
+#define HIGH_TEMP_SHORT_CHECK_TIMEOUT 1500 /*ms*/
+#define FIRST_PROTECT_CONNECTER_TEMP 60
+#define SECOND_PROTECT_CONNECTER_TEMP 45
+#define SECOND_PROTECT_INTERVAL_TEMP 15
+#define THIRD_PROTECT_RISE_RATE 3
+#define THIRD_PROTECT_LOOP_TEMP 40
+#define THIRD_PROTECT_INTERVAL_TEMP 15
+#define THIRD_PROTECT_BASE_TEMP 20
+#define FV_OFFSET_VOLTAGE 70
+#define SKIN_THERMAL_HIGH 40
+#define SKIN_THERMAL_NORMAL 37
+#define FULL_COUNT_SW_NUM 1
 #define DEFAULT_VOTER			"DEFAULT_VOTER"
 #define USER_VOTER			"USER_VOTER"
 #define PD_VOTER			"PD_VOTER"
@@ -498,6 +526,107 @@ struct smb_charger {
 	bool			typec_role_swap_failed;
 
 	/* cached status */
+
+/* @bsp, 2019/04/17 Battery & Charging porting */
+	int				BATT_TEMP_T0;
+	int				BATT_TEMP_T1;
+	int				BATT_TEMP_T2;
+	int				BATT_TEMP_T3;
+	int				BATT_TEMP_T4;
+	int				BATT_TEMP_T5;
+	int				BATT_TEMP_T6;
+	int				batt_health;
+	int				ibatmax[TEMP_REGION_MAX];
+	int				vbatmax[TEMP_REGION_MAX];
+	int				vbatdet[TEMP_REGION_MAX];
+	int				temp_littel_cool_voltage;
+	int				temp_littel_cool_current;
+	int				temp_cool_voltage;
+	int				temp_cool_current;
+	int				fake_chgvol;
+	int				fake_temp;
+	int				fake_protect_sts;
+	int				non_stand_chg_current;
+	int				non_stand_chg_count;
+	int				redet_count;
+	int				reset_count;
+	int				dump_count;
+	int				ck_apsd_count;
+	int				ck_dash_count;
+	int				ck_unplug_count;
+	int				recovery_boost_count;
+	int				op_icl_val;
+	int				plug_irq;
+	int				hw_detect;
+	bool				otg_switch;
+	bool				use_fake_chgvol;
+	bool				use_fake_temp;
+	bool				use_fake_protect_sts;
+	bool				vbus_present;
+	bool				hvdcp_present;
+	bool				dash_present;
+	bool				charger_collpse;
+	bool				usb_enum_status;
+	bool				non_std_chg_present;
+	bool				usb_type_redet_done;
+	bool				time_out;
+	bool				disable_normal_chg_for_dash;
+	bool				ship_mode;
+	bool				dash_on;
+	bool				chg_ovp;
+	bool				is_power_changed;
+	bool				recharge_pending;
+	bool				recharge_status;
+	bool temp_littel_cool_set_current_0_point_25c;
+	bool				oem_lcd_is_on;
+	bool                            disable_ctrl_current;
+	bool				chg_enabled;
+	bool				op_apsd_done;
+	bool				re_trigr_dash_done;
+	bool				boot_usb_present;
+	bool				init_irq_done;
+	bool				is_aging_test;
+	bool				revert_boost_trigger;
+	bool               switch_on_fastchg;
+	bool				probe_done;
+	int				ffc_count;
+	int				FFC_TEMP_T1;
+	int				FFC_TEMP_T2;
+	int				FFC_TEMP_T3;
+	int				FFC_NOR_FCC;
+	int				FFC_WARM_FCC;
+	int				FFC_NORMAL_CUTOFF;
+	int				FFC_WARM_CUTOFF;
+	int				FFC_VBAT_FULL;
+	enum ffc_step			ffc_status;
+	enum temp_region_type		mBattTempRegion;
+	enum batt_status_type		battery_status;
+	short				mBattTempBoundT0;
+	short				mBattTempBoundT1;
+	short				mBattTempBoundT2;
+	short				mBattTempBoundT3;
+	short				mBattTempBoundT4;
+	short				mBattTempBoundT5;
+	short				mBattTempBoundT6;
+	uint32_t			bus_client;
+	bool				is_audio_adapter;
+	int					fv_offset_voltage_mv;
+	int					normal_check_interval_period;
+	int					fast_check_interval_period;
+	int					fast_check_threshold_temp;
+	int					high_temp_short_check_timeout;
+	int					first_protect_connecter_temp;
+	int					second_protect_connecter_temp;
+	int					second_protect_interval_temp;
+	int					third_protect_rise_rate;
+	int					third_protect_loop_temp;
+	int					third_protect_interval_temp;
+	int					third_protect_base_temp;
+	int					skin_thermal_high_threshold;
+	int					skin_thermal_normal_threshold;
+	bool					enable_dash_current_adjust;
+	int					full_count_sw_num;
+
 	bool			system_suspend_supported;
 	int			boost_threshold_ua;
 	int			system_temp_level;

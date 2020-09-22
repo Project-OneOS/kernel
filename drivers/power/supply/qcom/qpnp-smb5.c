@@ -418,6 +418,313 @@ static int smb5_parse_dt(struct smb5 *chip)
 	chg->step_chg_enabled = of_property_read_bool(node,
 				"qcom,step-charging-enable");
 
+/* @bsp, 2019/04/17 Battery & Charging porting */
+/*read ffc param*/
+	OF_PROP_READ(node, "ffc-pre-normal-decidegc",
+			chg->FFC_TEMP_T1, retval, 1);
+	OF_PROP_READ(node, "ffc-normal-decidegc",
+		chg->FFC_TEMP_T2, retval, 1);
+	OF_PROP_READ(node, "ffc-warm-decidegc",
+		chg->FFC_TEMP_T3, retval, 1);
+	OF_PROP_READ(node, "ffc-normal-fcc-ma",
+		chg->FFC_NOR_FCC, retval, 1);
+	OF_PROP_READ(node, "ffc-warm-fcc-ma",
+		chg->FFC_WARM_FCC, retval, 1);
+	OF_PROP_READ(node, "ffc-normal-cutoff-ma",
+		chg->FFC_NORMAL_CUTOFF, retval, 1);
+	OF_PROP_READ(node, "ffc-warm-cutoff-ma",
+		chg->FFC_WARM_CUTOFF, retval, 1);
+	OF_PROP_READ(node, "ffc-full-vbat-mv",
+		chg->FFC_VBAT_FULL, retval, 1);
+	pr_info("T1:%d, T2:%d, T3:%d, fcc1:%d, fcc1:%d, cut1:%d, cut2:%d,full:%d\n",
+		chg->FFC_TEMP_T1, chg->FFC_TEMP_T2, chg->FFC_TEMP_T3,
+		chg->FFC_NOR_FCC, chg->FFC_WARM_FCC, chg->FFC_NORMAL_CUTOFF,
+		chg->FFC_WARM_CUTOFF, chg->FFC_VBAT_FULL);
+
+	/* read ibatmax setting for different temp regions */
+	OF_PROP_READ(node, "ibatmax-little-cold-ma",
+			chg->ibatmax[BATT_TEMP_LITTLE_COLD], retval, 1);
+	OF_PROP_READ(node, "ibatmax-cool-ma",
+			chg->ibatmax[BATT_TEMP_COOL], retval, 1);
+	OF_PROP_READ(node, "ibatmax-little-cool-ma",
+			chg->ibatmax[BATT_TEMP_LITTLE_COOL], retval, 1);
+	OF_PROP_READ(node, "ibatmax-pre-normal-ma",
+			chg->ibatmax[BATT_TEMP_PRE_NORMAL], retval, 1);
+	OF_PROP_READ(node, "ibatmax-normal-ma",
+			chg->ibatmax[BATT_TEMP_NORMAL], retval, 1);
+	OF_PROP_READ(node, "ibatmax-warm-ma",
+			chg->ibatmax[BATT_TEMP_WARM], retval, 1);
+
+	/* read vbatmax setting for different temp regions */
+	OF_PROP_READ(node, "vbatmax-little-cold-mv",
+			chg->vbatmax[BATT_TEMP_LITTLE_COLD], retval, 1);
+	OF_PROP_READ(node, "vbatmax-cool-mv",
+			chg->vbatmax[BATT_TEMP_COOL], retval, 1);
+	OF_PROP_READ(node, "vbatmax-little-cool-mv",
+			chg->vbatmax[BATT_TEMP_LITTLE_COOL], retval, 1);
+	OF_PROP_READ(node, "vbatmax-pre-normal-mv",
+			chg->vbatmax[BATT_TEMP_PRE_NORMAL], retval, 1);
+	OF_PROP_READ(node, "vbatmax-normal-mv",
+			chg->vbatmax[BATT_TEMP_NORMAL], retval, 1);
+	OF_PROP_READ(node, "vbatmax-warm-mv",
+			chg->vbatmax[BATT_TEMP_WARM], retval, 1);
+
+	/* read vbatdet setting for different temp regions */
+	OF_PROP_READ(node, "vbatdet-little-cold-mv",
+			chg->vbatdet[BATT_TEMP_LITTLE_COLD], retval, 1);
+	OF_PROP_READ(node, "vbatdet-cool-mv",
+			chg->vbatdet[BATT_TEMP_COOL], retval, 1);
+	OF_PROP_READ(node, "vbatdet-little-cool-mv",
+			chg->vbatdet[BATT_TEMP_LITTLE_COOL], retval, 1);
+	OF_PROP_READ(node, "vbatdet-pre-normal-mv",
+			chg->vbatdet[BATT_TEMP_PRE_NORMAL], retval, 1);
+	OF_PROP_READ(node, "vbatdet-normal-mv",
+			chg->vbatdet[BATT_TEMP_NORMAL], retval, 1);
+	OF_PROP_READ(node, "vbatdet-warm-mv",
+			chg->vbatdet[BATT_TEMP_WARM], retval, 1);
+	OF_PROP_READ(node, "little-cool-vbat-thr-mv",
+			chg->temp_littel_cool_voltage, retval, 1);
+	if (chg->temp_littel_cool_voltage < 0)
+		chg->temp_littel_cool_voltage = 4180;
+	OF_PROP_READ(node, "cool-vbat-thr-mv",
+			chg->temp_cool_voltage, retval, 1);
+	if (chg->temp_cool_voltage < 0)
+		chg->temp_cool_voltage = 4180;
+	OF_PROP_READ(node, "ibatmax-little-cool-thr-ma",
+			chg->temp_littel_cool_current, retval, 1);
+	if (chg->temp_littel_cool_current < 0)
+		chg->temp_littel_cool_current = 2000;
+	OF_PROP_READ(node, "ibatmax-cool-thr-ma",
+			chg->temp_cool_current, retval, 1);
+	if (chg->temp_cool_current < 0)
+		chg->temp_cool_current = 1140;
+	/* read temp region settings */
+	OF_PROP_READ(node, "cold-bat-decidegc",
+			chg->BATT_TEMP_T0, retval, 1);
+	chg->BATT_TEMP_T0 = 0 - chg->BATT_TEMP_T0;
+	OF_PROP_READ(node, "little-cold-bat-decidegc",
+			chg->BATT_TEMP_T1, retval, 1);
+	OF_PROP_READ(node, "cool-bat-decidegc",
+			chg->BATT_TEMP_T2, retval, 1);
+	OF_PROP_READ(node, "little-cool-bat-decidegc",
+			chg->BATT_TEMP_T3, retval, 1);
+	OF_PROP_READ(node, "pre-normal-bat-decidegc",
+			chg->BATT_TEMP_T4, retval, 1);
+	OF_PROP_READ(node, "warm-bat-decidegc",
+			chg->BATT_TEMP_T5, retval, 1);
+	OF_PROP_READ(node, "hot-bat-decidegc",
+			chg->BATT_TEMP_T6, retval, 1);
+	chg->pd_not_supported = of_property_read_bool(node,
+						"disable-pd");
+
+	chg->check_batt_full_by_sw = of_property_read_bool(node,
+				"op,sw-check-full-enable");
+	chg->disable_ctrl_current = of_property_read_bool(node,
+						"op,dis_ctrl_current");
+	rc = of_property_read_u32(node,
+					"op,sw-iterm-ma",
+					&chg->sw_iterm_ma);
+	if (rc < 0)
+		chg->sw_iterm_ma = 150;
+	pr_info("sw_iterm_ma=%d,check_batt_full_by_sw=%d",
+				chg->sw_iterm_ma, chg->check_batt_full_by_sw);
+	rc = of_property_read_u32(node,
+					"op,little_cold_term_current",
+					&chg->little_cold_iterm_ma);
+	pr_info("little_cold_iterm_ma=%d", chg->little_cold_iterm_ma);
+	chg->OTG_ICL_CTRL = of_property_read_bool(node,
+						"op,otg-icl-ctrl-enable");
+	OF_PROP_READ(node, "otg-low-battery-thr",
+			chg->OTG_LOW_BAT, retval, 1);
+	if (retval < 0)
+		chg->OTG_LOW_BAT = -EINVAL;
+	OF_PROP_READ(node, "otg-low-bat-icl-thr",
+			chg->OTG_LOW_BAT_ICL, retval, 1);
+	if (retval < 0)
+		chg->OTG_LOW_BAT_ICL = -EINVAL;
+	OF_PROP_READ(node, "otg-normal-bat-icl-thr",
+			chg->OTG_NORMAL_BAT_ICL, retval, 1);
+	if (retval < 0)
+		chg->OTG_NORMAL_BAT_ICL = -EINVAL;
+	pr_info("OTG_ICL:enable:%d,CapThr:%d,LowThr:%d,NorThr:%d\n",
+		chg->OTG_ICL_CTRL,
+		chg->OTG_LOW_BAT,
+		chg->OTG_LOW_BAT_ICL,
+		chg->OTG_NORMAL_BAT_ICL);
+/* @bsp, 2018/07/26 enable stm6620 sheepmode */
+	chg->shipmode_en = of_get_named_gpio_flags(node,
+						"op,stm-ctrl-gpio", 0, &flags);
+	chg->vbus_ctrl = of_get_named_gpio_flags(node,
+					"op,vbus-ctrl-gpio", 0, &flags);
+	chg->plug_irq = of_get_named_gpio_flags(node,
+					"op,usb-check", 0, &flags);
+/* @bsp, 2019/06/28 vph sel set disable */
+	chg->vph_sel_disable = of_property_read_bool(node,
+					"vph-sel-disable");
+	/* read other settings */
+	OF_PROP_READ(node, "qcom,cutoff-voltage-with-charger",
+				smbchg_cutoff_volt_with_charger, retval, 1);
+	chg->chg_enabled = !(of_property_read_bool(node,
+						"qcom,charging-disabled"));
+
+	pr_info("T0=%d, T1=%d, T2=%d, T3=%d, T4=%d, T5=%d, T6=%d\n",
+		chg->BATT_TEMP_T0, chg->BATT_TEMP_T1, chg->BATT_TEMP_T2,
+		chg->BATT_TEMP_T3, chg->BATT_TEMP_T4, chg->BATT_TEMP_T5,
+		chg->BATT_TEMP_T6);
+	pr_info("BATT_TEMP_LITTLE_COLD=%d, %d, %d\n",
+		chg->ibatmax[BATT_TEMP_LITTLE_COLD],
+		chg->vbatmax[BATT_TEMP_LITTLE_COLD],
+		chg->vbatdet[BATT_TEMP_LITTLE_COLD]);
+	pr_info("BATT_TEMP_COOL=%d, %d, %d\n",
+		chg->ibatmax[BATT_TEMP_COOL],
+		chg->vbatmax[BATT_TEMP_COOL],
+		chg->vbatdet[BATT_TEMP_COOL]);
+	pr_info("BATT_TEMP_LITTLE_COOL=%d, %d, %d\n",
+		chg->ibatmax[BATT_TEMP_LITTLE_COOL],
+		chg->vbatmax[BATT_TEMP_LITTLE_COOL],
+		chg->vbatdet[BATT_TEMP_LITTLE_COOL]);
+	pr_info("BATT_TEMP_PRE_NORMAL=%d, %d, %d\n",
+		chg->ibatmax[BATT_TEMP_PRE_NORMAL],
+		chg->vbatmax[BATT_TEMP_PRE_NORMAL],
+		chg->vbatdet[BATT_TEMP_PRE_NORMAL]);
+	pr_info("BATT_TEMP_NORMAL=%d, %d, %d\n",
+		chg->ibatmax[BATT_TEMP_NORMAL],
+		chg->vbatmax[BATT_TEMP_NORMAL],
+		chg->vbatdet[BATT_TEMP_NORMAL]);
+	pr_info("BATT_TEMP_WARM=%d, %d, %d\n",
+		chg->ibatmax[BATT_TEMP_WARM],
+		chg->vbatmax[BATT_TEMP_WARM],
+		chg->vbatdet[BATT_TEMP_WARM]);
+	pr_info("cutoff_volt_with_charger=%d, disable-pd=%d\n",
+		smbchg_cutoff_volt_with_charger, *chg->pd_disabled);
+
+	OF_PROP_READ(node, "op,fv-offset-voltage-mv",
+			chg->fv_offset_voltage_mv, retval, 1);
+	if (chg->fv_offset_voltage_mv <= 0)
+		chg->fv_offset_voltage_mv =
+			FV_OFFSET_VOLTAGE;
+	pr_info("fv_offset_voltage_mv=%d\n",
+		chg->fv_offset_voltage_mv);
+
+	OF_PROP_READ(node, "op,normal-check-interval-period",
+			chg->normal_check_interval_period, retval, 1);
+	if (chg->normal_check_interval_period <= 0)
+		chg->normal_check_interval_period =
+			NORMAL_CHECK_INTERVAL_PERIOD;
+	pr_info("normal_check_interval_period=%d\n",
+		chg->normal_check_interval_period);
+
+	OF_PROP_READ(node, "op,fast-check-interval-period",
+			chg->fast_check_interval_period, retval, 1);
+	if (chg->fast_check_interval_period <= 0)
+		chg->fast_check_interval_period =
+			FAST_CHECK_INTERVAL_PERIOD;
+	pr_info("fast_check_interval_period=%d\n",
+		chg->fast_check_interval_period);
+
+	OF_PROP_READ(node, "op,fast-check-threshold-temp",
+			chg->fast_check_threshold_temp, retval, 1);
+	if (chg->fast_check_threshold_temp <= 0)
+		chg->fast_check_threshold_temp =
+			FAST_CHECK_THRESHOLD_TEMP;
+	pr_info("fast_check_threshold_temp=%d\n",
+		chg->fast_check_threshold_temp);
+
+	OF_PROP_READ(node, "op,high-temp-short-check-timeout",
+			chg->high_temp_short_check_timeout, retval, 1);
+	if (chg->high_temp_short_check_timeout <= 0)
+		chg->high_temp_short_check_timeout =
+			HIGH_TEMP_SHORT_CHECK_TIMEOUT;
+	pr_info("high_temp_short_check_timeout=%d\n",
+		chg->high_temp_short_check_timeout);
+
+	OF_PROP_READ(node, "op,first-protect-connecter-temp",
+			chg->first_protect_connecter_temp, retval, 1);
+	if (chg->first_protect_connecter_temp <= 0)
+		chg->first_protect_connecter_temp =
+			FIRST_PROTECT_CONNECTER_TEMP;
+	pr_info("first_protect_connecter_temp=%d\n",
+		chg->first_protect_connecter_temp);
+
+	OF_PROP_READ(node, "op,second-protect-connecter-temp",
+			chg->second_protect_connecter_temp, retval, 1);
+	if (chg->second_protect_connecter_temp <= 0)
+		chg->second_protect_connecter_temp =
+			SECOND_PROTECT_CONNECTER_TEMP;
+	pr_info("second_protect_connecter_temp=%d\n",
+		chg->second_protect_connecter_temp);
+
+	OF_PROP_READ(node, "op,second-protect-interval-temp",
+			chg->second_protect_interval_temp, retval, 1);
+	if (chg->second_protect_interval_temp <= 0)
+		chg->second_protect_interval_temp =
+			SECOND_PROTECT_INTERVAL_TEMP;
+	pr_info("second_protect_interval_temp=%d\n",
+		chg->second_protect_interval_temp);
+
+	OF_PROP_READ(node, "op,third-protect-rise-rate",
+			chg->third_protect_rise_rate, retval, 1);
+	if (chg->third_protect_rise_rate <= 0)
+		chg->third_protect_rise_rate =
+			THIRD_PROTECT_RISE_RATE;
+	pr_info("third_protect_rise_rate=%d\n",
+		chg->third_protect_rise_rate);
+
+	OF_PROP_READ(node, "op,third-protect-loop-temp",
+			chg->third_protect_loop_temp, retval, 1);
+	if (chg->third_protect_loop_temp <= 0)
+		chg->third_protect_loop_temp =
+			THIRD_PROTECT_LOOP_TEMP;
+	pr_info("third_protect_loop_temp=%d\n",
+		chg->third_protect_loop_temp);
+
+	OF_PROP_READ(node, "op,third-protect-interval-temp",
+			chg->third_protect_interval_temp, retval, 1);
+	if (chg->third_protect_interval_temp <= 0)
+		chg->third_protect_interval_temp =
+			THIRD_PROTECT_INTERVAL_TEMP;
+	pr_info("third_protect_interval_temp=%d\n",
+		chg->third_protect_interval_temp);
+
+	OF_PROP_READ(node, "op,third-protect-base-temp",
+			chg->third_protect_base_temp, retval, 1);
+	if (chg->third_protect_base_temp <= 0)
+		chg->third_protect_base_temp =
+			THIRD_PROTECT_BASE_TEMP;
+	pr_info("third_protect_base_temp=%d\n",
+		chg->third_protect_base_temp);
+
+	OF_PROP_READ(node, "op,skin-thermal-high-threshold",
+			chg->skin_thermal_high_threshold, retval, 1);
+	if (chg->skin_thermal_high_threshold <= 0)
+		chg->skin_thermal_high_threshold =
+			SKIN_THERMAL_HIGH;
+	pr_info("skin_thermal_high_threshold=%d\n",
+		chg->skin_thermal_high_threshold);
+
+	OF_PROP_READ(node, "op,skin-thermal-normal-threshold",
+			chg->skin_thermal_normal_threshold, retval, 1);
+	if (chg->skin_thermal_normal_threshold <= 0)
+		chg->skin_thermal_normal_threshold =
+			SKIN_THERMAL_NORMAL;
+	pr_info("skin_thermal_normal_threshold=%d\n",
+		chg->skin_thermal_normal_threshold);
+
+	chg->enable_dash_current_adjust = of_property_read_bool(node,
+					"op,enable-dash-current-dynamic-adjust");
+	pr_info("enable_dash_current_adjust=%d\n",
+		chg->enable_dash_current_adjust);
+
+	OF_PROP_READ(node, "op,full-count-sw-numb",
+			chg->full_count_sw_num, retval, 1);
+	if (chg->full_count_sw_num <= 0)
+		chg->full_count_sw_num =
+			FULL_COUNT_SW_NUM;
+	pr_info("full_count_sw_num=%d\n",
+		chg->full_count_sw_num);
+	/* disable step_chg */
+	chg->step_chg_enabled = false;
+
 	chg->typec_legacy_use_rp_icl = of_property_read_bool(node,
 				"qcom,typec-legacy-rp-icl");
 
