@@ -36,7 +36,22 @@ ifeq ($(CONFIG_BUILD_ARM64_DT_OVERLAY),y)
 	dtbo-$(CONFIG_ARCH_SDMSHRIKE) += \
 		sdmshrike-cdp-overlay.dtbo \
 		sa8195p-adp-star-overlay.dtbo \
-		sa8195p-v2-adp-air-overlay.dtbo
+		sa8195p-v2-adp-air-overlay.dtbo \
+		guacamole-overlay-pvt.dtbo \
+		guacamoleb-overlay-pvt.dtbo \
+		guacamole-sdx50m-overlay-pvt.dtbo \
+		guacamoles-sdx50m-overlay-pvt.dtbo \
+		hotdogb-overlay-pvt.dtbo \
+		hotdogb-overlay-pvt-second.dtbo \
+		hotdog-overlay-pvt.dtbo
+
+guacamole-overlay-pvt.dtbo-base := sm8150-v2.dtb
+guacamoleb-overlay-pvt.dtbo-base := sm8150-v2.dtb
+guacamole-sdx50m-overlay-pvt.dtbo-base := sm8150-v2.dtb
+guacamoles-sdx50m-overlay-pvt.dtbo-base := sm8150-v2.dtb
+hotdog-overlay-pvt.dtbo-base := sm8150-v2.dtb
+hotdogb-overlay-pvt.dtbo-base := sm8150-v2.dtb
+hotdogb-overlay-pvt-second.dtbo-base := sm8150-v2.dtb
 
 sdmshrike-cdp-overlay.dtbo-base := sdmshrike.dtb sdmshrike-v2.dtb
 sa8195p-adp-star-overlay.dtbo-base := sa8195p.dtb
