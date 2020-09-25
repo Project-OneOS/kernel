@@ -15,15 +15,12 @@ jobs:
     - uses: actions/checkout@v2
     - name: Toolchains
       run: |
-       wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/android-10.0.0_r3/clang-r353983c.tar.gz
-       mkdir clang && cd clang && tar -xvf ../clang-r353983c.tar.gz
-       cd ../ && rm -rf clang-r353983c.tar.gz
-       git clone --depth=1 https://github.com/AndroiableDroid/toolchain -b opt-linaro-7.x linaro
-       export PATH="$(pwd)/clang/bin:$(pwd)/linaro/bin":${PATH}
+       git clone https://github.com/kdrag0n/proton-clang --depth=1 clang
+       export PATH="$(pwd)/clang/bin:"${PATH}
     - name: Making Defconfig
-      run: make ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-opt-linux-android- vendor/sm8150-perf_defconfig
-    - name: Making Defconfig
-      run: make ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-opt-linux-android-
+      run: make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu- vendor/sm8150-perf_defconfig
+    - name: Making Image
+      run: make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu-
     - name: Upload Build
       uses: actions/upload-artifact@v2.1.4
       with:
