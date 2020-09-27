@@ -334,11 +334,7 @@ static int ist8801_set_reg(int reg, int val)
 }
 
 
-<<<<<<< HEAD
 static bool ist8801_is_power_on(void)
-=======
-static bool ist8801_is_power_on()
->>>>>>> 6d11b53700ea... import OnePlus OSS drivers and coretech
 {
 	if (g_ist8801_data == NULL) {
 		TRI_KEY_LOG("g_ist8801_data NULL \n");
@@ -726,11 +722,7 @@ static int ist8801_enable_irq(bool enable)
 	return 0;
 }
 
-<<<<<<< HEAD
 static int ist8801_clear_irq(void)
-=======
-static int ist8801_clear_irq()
->>>>>>> 6d11b53700ea... import OnePlus OSS drivers and coretech
 {
 	if (g_ist8801_data == NULL) {
 		TRI_KEY_LOG("g_ist8801_data NULL \n");
@@ -742,11 +734,7 @@ static int ist8801_clear_irq()
 	return 0;
 }
 
-<<<<<<< HEAD
 static int ist8801_get_irq_state(void)
-=======
-static int ist8801_get_irq_state()
->>>>>>> 6d11b53700ea... import OnePlus OSS drivers and coretech
 {
 	if (g_ist8801_data == NULL) {
 		TRI_KEY_LOG("g_ist8801_data NULL \n");
