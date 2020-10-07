@@ -2553,8 +2553,6 @@ static int fsg_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
 	fsg->common->bulk_out_maxpacket =
 	usb_endpoint_maxp(fsg->bulk_out->desc);
 	clear_bit(IGNORE_BULK_OUT, &fsg->atomic_bitflags);
-
-	__raise_exception(fsg->common, FSG_STATE_CONFIG_CHANGE, fsg);
 	return USB_GADGET_DELAYED_STATUS;
 
 reset_bulk_int:
@@ -2583,8 +2581,6 @@ static void fsg_disable(struct usb_function *f)
 		fsg->bulk_out->driver_data = NULL;
 		fsg->bulk_out_enabled = 0;
 	}
-
-	__raise_exception(fsg->common, FSG_STATE_CONFIG_CHANGE, NULL);
 
 	/* allow usb LPM after eps are disabled */
 	usb_gadget_autopm_put_async(fsg->common->gadget);
